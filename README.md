@@ -6,7 +6,6 @@ A visual-based attendance tracker that uses computer vision to recognize student
 - Real-time face recognition through a webcam
 - Live class roster dashboard (Tkinter)
 - Automatic daily CSV attendance log
-- Shows "Not Recognized" for unknown faces
 - Requires several consecutive matching frames before marking someone present
 
 ## Requirements
