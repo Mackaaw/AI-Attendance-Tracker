@@ -1,0 +1,4 @@
+__pycache__/
+students/
+Attendance_*.csv
+.env
