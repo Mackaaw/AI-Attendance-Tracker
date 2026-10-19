@@ -19,7 +19,7 @@ import numpy as np
 from PIL import Image, ImageTk
 
 # ---------------------------------------------------------------------
-# 1. SETTINGS (tune these)
+# 1. SETTINGS (change them as to ur liking)
 # ---------------------------------------------------------------------
 STUDENTS_DIR = 'students'
 CAMERA_INDEX = 0
