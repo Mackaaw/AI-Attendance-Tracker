@@ -1,6 +1,6 @@
 # =====================================================================
 #  AI Attendance Tracker
-# (face_recognition + OpenCV) with Tkinter dashboard
+#  Face recognition (face_recognition + OpenCV) with a Tkinter dashboard
 # =====================================================================
 import os
 import re
@@ -9,6 +9,13 @@ import csv
 from datetime import datetime
 import tkinter as tk
 from tkinter import ttk
+
+# for sound
+import threading
+try:
+    import winsound
+except ImportError:
+    winsound = None
 
 # Lets Python find a local copy of face_recognition placed next to this file
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -19,7 +26,7 @@ import numpy as np
 from PIL import Image, ImageTk
 
 # ---------------------------------------------------------------------
-# 1. SETTINGS (change them as to ur liking)
+# 1. SETTINGS (tune these)
 # ---------------------------------------------------------------------
 STUDENTS_DIR = 'students'
 CAMERA_INDEX = 0
@@ -30,6 +37,8 @@ CONFIRM_FRAMES = 6      # Processed frames a face must match before marking pres
 PROCESS_EVERY = 3       # Run recognition on every Nth camera frame (keeps UI smooth)
 DETECT_SCALE = 0.5      # Shrink factor for detection (0.5 is more accurate than 0.25)
 ENROLL_JITTERS = 10     # Extra samples per student photo (slower startup, better accuracy)
+SOUND_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'success.wav')
+
 
 VIDEO_MAX_W, VIDEO_MAX_H = 640, 480
 IMAGE_EXTS = ('.jpg', '.jpeg', '.png')
@@ -270,6 +279,14 @@ last_results = []
 frame_count = 0
 running = True
 
+def play_success_sound():
+    try:
+        if winsound and os.path.isfile(SOUND_FILE):
+            winsound.PlaySound(SOUND_FILE, winsound.SND_FILENAME | winsound.SND_ASYNC)
+        else:
+            root.bell()
+    except Exception as e:
+        print("Sound error:", e)
 
 def mark_present(name):
     current_time = datetime.now().strftime("%H:%M:%S")
@@ -279,6 +296,7 @@ def mark_present(name):
     tree.item(tree_items[name], values=(name, "\u2714 Present", current_time), tags=("present",))
     refresh_stats()
     status_var.set(f"{name} marked present at {current_time}")
+    play_success_sound()
 
 
 def identify(face_encoding):
