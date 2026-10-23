@@ -1,3 +1,4 @@
+# These packages are required for the program to work
 face_recognition
 opencv-python
 numpy
