@@ -1,6 +1,6 @@
 # AI-Attendance-Tracker
 
-A visual-based attendance tracker that uses computer vision to recognize students and mark them present or absent.
+A visual-based attendance tracker that uses computer vision to recognize students and mark them as present or absent.
 
 ## Features
 - Real-time face recognition through a webcam
@@ -23,14 +23,14 @@ Note: `face_recognition` depends on `dlib`, which can be tricky to install on Wi
 
 ## Setup
 1. Create a folder named `students` next to `attendance_system.py`.
-2. Add one clear, front-facing photo per student, named after the student (e.g. `john.jpg`).
+2. Add one clear, front-facing photo per student, named after the student (e.g. `john.jpg`). Make sure the lighting is clear.
 
 ## Usage
 ```bash
 python attendance_system.py
 ```
 
-The attendance log is saved as `Attendance_YYYY-MM-DD.csv`.
+The attendance log is saved as an excel file `Attendance_YYYY-MM-DD.csv`.
 
 ## Limitations
 Face recognition accuracy depends on lighting, camera quality, and the photos provided. Thresholds can be tuned in the script (`TOLERANCE`, `MARGIN`, `CONFIRM_FRAMES`).
