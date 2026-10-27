@@ -42,4 +42,7 @@ The attendance log is saved as an excel file `Attendance_YYYY-MM-DD.csv`.
 Face recognition accuracy depends on lighting, camera quality, and the photos provided. Thresholds can be tuned in the script (`TOLERANCE`, `MARGIN`, `CONFIRM_FRAMES`).
 
 
+
+
+
 - This project was made as an AI CAPSTONE PROJECT by a team of 5 for my school project, aligned with United Nations SDG Goal 4 - Quality Education
