@@ -43,19 +43,25 @@ SOUND_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'success.w
 VIDEO_MAX_W, VIDEO_MAX_H = 640, 480
 IMAGE_EXTS = ('.jpg', '.jpeg', '.png')
 
-# Theme colors (Tkinter, hex)
-BG = "#0f172a"
-PANEL = "#1e293b"
-TEXT = "#e2e8f0"
-MUTED = "#94a3b8"
-GREEN = "#22c55e"
-AMBER = "#f59e0b"
-RED = "#ef4444"
+# Theme colors (Tkinter, hex): warm charcoal
+BG = "#1c1917"
+PANEL = "#292524"
+PANEL_ALT = "#44403c"      # table header, selected row
+PANEL_HOVER = "#57534e"    # table header hover
+TEXT = "#f5f5f4"
+MUTED = "#a8a29e"
+GREEN = "#7fb069"          # muted sage instead of neon green
+AMBER = "#e0a458"
+RED = "#d6604d"
+ABSENT_TEXT = "#e58a7b"
 
-# Box colors for OpenCV (BGR order)
-CV_GREEN = (94, 197, 34)
-CV_AMBER = (11, 158, 245)
-CV_RED = (68, 68, 239)
+# Font
+UI_FONT = "Minecraft"
+
+# Box colors for OpenCV (BGR order, the same colors reversed)
+CV_GREEN = (105, 176, 127)
+CV_AMBER = (88, 164, 224)
+CV_RED = (77, 96, 214)
 FONT = cv2.FONT_HERSHEY_DUPLEX
 
 # ---------------------------------------------------------------------
@@ -158,9 +164,9 @@ root.configure(bg=BG)
 header = tk.Frame(root, bg=PANEL, height=70)
 header.pack(side=tk.TOP, fill=tk.X)
 header.pack_propagate(False)
-tk.Label(header, text="Smart Attendance Dashboard", font=("Segoe UI", 20, "bold"),
+tk.Label(header, text="Smart Attendance Dashboard", font=(UI_FONT, 20, "bold"),
          bg=PANEL, fg=TEXT).pack(side=tk.LEFT, padx=24)
-clock_label = tk.Label(header, font=("Segoe UI", 12), bg=PANEL, fg=MUTED)
+clock_label = tk.Label(header, font=(UI_FONT, 12), bg=PANEL, fg=MUTED)
 clock_label.pack(side=tk.RIGHT, padx=24)
 
 # Footer / status bar
@@ -170,7 +176,7 @@ if person_names:
 else:
     status_var.set("No students loaded. Add photos to the 'students' folder and restart.")
 tk.Label(root, textvariable=status_var, anchor="w", bg=PANEL, fg=MUTED,
-         font=("Segoe UI", 10), padx=24, pady=8).pack(side=tk.BOTTOM, fill=tk.X)
+         font=(UI_FONT, 10), padx=24, pady=8).pack(side=tk.BOTTOM, fill=tk.X)
 
 # Body
 body = tk.Frame(root, bg=BG)
@@ -181,7 +187,7 @@ body.rowconfigure(0, weight=1)
 # Left: camera card
 left_panel = tk.Frame(body, bg=PANEL)
 left_panel.grid(row=0, column=0, sticky="n", padx=(0, 20))
-tk.Label(left_panel, text="Live Camera", font=("Segoe UI", 14, "bold"),
+tk.Label(left_panel, text="Live Camera", font=(UI_FONT, 14, "bold"),
          bg=PANEL, fg=TEXT).pack(anchor="w", padx=16, pady=(14, 8))
 
 placeholder = tk.PhotoImage(width=VIDEO_MAX_W, height=VIDEO_MAX_H)
@@ -192,8 +198,8 @@ video_label.pack(padx=16)
 legend = tk.Frame(left_panel, bg=PANEL)
 legend.pack(anchor="w", padx=16, pady=(10, 14))
 for color, text in ((GREEN, "Present"), (AMBER, "Verifying"), (RED, "Not Recognized")):
-    tk.Label(legend, text="\u25cf", fg=color, bg=PANEL, font=("Segoe UI", 12)).pack(side=tk.LEFT)
-    tk.Label(legend, text=text + "   ", fg=MUTED, bg=PANEL, font=("Segoe UI", 10)).pack(side=tk.LEFT)
+    tk.Label(legend, text="\u25cf", fg=color, bg=PANEL, font=(UI_FONT, 12)).pack(side=tk.LEFT)
+    tk.Label(legend, text=text + "   ", fg=MUTED, bg=PANEL, font=(UI_FONT, 10)).pack(side=tk.LEFT)
 
 # Right: stats + roster
 right_panel = tk.Frame(body, bg=BG)
@@ -203,9 +209,9 @@ right_panel.grid(row=0, column=1, sticky="nsew")
 def make_card(parent, title, color, last=False):
     card = tk.Frame(parent, bg=PANEL)
     card.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 0 if last else 12))
-    value = tk.Label(card, text="0", font=("Segoe UI", 28, "bold"), bg=PANEL, fg=color)
+    value = tk.Label(card, text="0", font=(UI_FONT, 28, "bold"), bg=PANEL, fg=color)
     value.pack(anchor="w", padx=16, pady=(10, 0))
-    tk.Label(card, text=title, font=("Segoe UI", 10), bg=PANEL, fg=MUTED).pack(
+    tk.Label(card, text=title, font=(UI_FONT, 10), bg=PANEL, fg=MUTED).pack(
         anchor="w", padx=16, pady=(0, 10))
     return value
 
@@ -218,17 +224,17 @@ absent_value = make_card(stats_row, "Absent", RED, last=True)
 
 table_card = tk.Frame(right_panel, bg=PANEL)
 table_card.pack(fill=tk.BOTH, expand=True, pady=(12, 0))
-tk.Label(table_card, text="Live Class Roster", font=("Segoe UI", 14, "bold"),
+tk.Label(table_card, text="Live Class Roster", font=(UI_FONT, 14, "bold"),
          bg=PANEL, fg=TEXT).pack(anchor="w", padx=16, pady=(14, 8))
 
 style = ttk.Style()
 style.theme_use("clam")
 style.configure("Treeview", background=PANEL, fieldbackground=PANEL, foreground=TEXT,
-                rowheight=36, font=("Segoe UI", 12), borderwidth=0)
-style.configure("Treeview.Heading", background="#334155", foreground=TEXT,
-                font=("Segoe UI", 12, "bold"), relief="flat")
-style.map("Treeview", background=[("selected", "#334155")])
-style.map("Treeview.Heading", background=[("active", "#475569")])
+                rowheight=36, font=(UI_FONT, 12), borderwidth=0)
+style.configure("Treeview.Heading", background=PANEL_ALT, foreground=TEXT,
+                font=(UI_FONT, 12, "bold"), relief="flat")
+style.map("Treeview", background=[("selected", PANEL_ALT)])
+style.map("Treeview.Heading", background=[("active", PANEL_HOVER)])
 
 tree_frame = tk.Frame(table_card, bg=PANEL)
 tree_frame.pack(fill=tk.BOTH, expand=True, padx=16, pady=(0, 16))
@@ -242,7 +248,7 @@ tree.column('Name', width=220, anchor=tk.W)
 tree.column('Status', width=140, anchor=tk.CENTER)
 tree.column('Time', width=140, anchor=tk.CENTER)
 tree.tag_configure("present", foreground=GREEN)
-tree.tag_configure("absent", foreground="#f87171")
+tree.tag_configure("absent", foreground=ABSENT_TEXT)
 
 scrollbar = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=tree.yview)
 tree.configure(yscrollcommand=scrollbar.set)
