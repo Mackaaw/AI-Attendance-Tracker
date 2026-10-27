@@ -25,6 +25,12 @@ Note: `face_recognition` depends on `dlib`, which can be tricky to install on Wi
 1. Create a folder named `students` next to `attendance_system.py`.
 2. Add one clear, front-facing photo per student, named after the student (e.g. `john.jpg`). Make sure the lighting is clear.
 
+## Custom Sound
+The app plays `success.wav` (included in the repo) when a student is marked present.
+- To use your own sound, replace `success.wav` with another file of the same name.
+- It must be a real **WAV** file (16-bit PCM). Renaming an mp3 or mp4 to `.wav` will not work.
+- Sound playback uses `winsound`, so it works on **Windows**. On other systems the app falls back to a basic system beep.
+
 ## Usage
 ```bash
 python attendance_system.py
