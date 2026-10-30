@@ -7,6 +7,7 @@ A visual-based attendance tracker that uses computer vision to recognize student
 - Live class roster dashboard (Tkinter)
 - Automatic daily CSV attendance log
 - Requires several consecutive matching frames before marking someone present
+- Customizable font, user interface etc.
 
 ## Requirements
 - Python 3.8+
