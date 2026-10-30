@@ -50,13 +50,13 @@ PANEL_ALT = "#44403c"      # table header, selected row
 PANEL_HOVER = "#57534e"    # table header hover
 TEXT = "#f5f5f4"
 MUTED = "#a8a29e"
-GREEN = "#7fb069"          # muted sage instead of neon green
+GREEN = "#7fb069"          
 AMBER = "#e0a458"
 RED = "#d6604d"
 ABSENT_TEXT = "#e58a7b"
 
 # Font
-UI_FONT = "Minecraft"
+UI_FONT = "Open Sans"      # Choose the font you prefer
 
 # Box colors for OpenCV (BGR order, the same colors reversed)
 CV_GREEN = (105, 176, 127)
@@ -156,6 +156,26 @@ if not video_capture.isOpened():
 # ---------------------------------------------------------------------
 root = tk.Tk()
 root.title("Smart Attendance Dashboard")
+
+from tkinter import font as tkfont
+def report_font():                                   # checking the font
+    families = tkfont.families(root)
+    requested = UI_FONT
+    actual = tkfont.Font(root=root, family=requested, size=12).actual()["family"]
+    similar = [f for f in families if requested.lower() in f.lower()]
+
+    print("----- Font check -----")
+    print(f"Requested font : {requested}")
+    print(f"Font actually used: {actual}")
+    if actual.lower() == requested.lower():
+        print("Status: OK. Requested font is in use.")
+    else:
+        print(f"Status: '{requested}' was not found. Instead '{actual}' used..")
+        if similar:
+            print(f"Installed fonts with a similar name: {similar}")
+    print("----------------------")
+report_font()
+
 root.geometry("1280x740")
 root.minsize(1100, 660)
 root.configure(bg=BG)
