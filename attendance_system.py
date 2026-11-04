@@ -10,6 +10,8 @@ from datetime import datetime
 import tkinter as tk
 from tkinter import ttk
 
+os.environ["OPENCV_LOG_LEVEL"] = "SILENT"
+
 # for sound
 import threading
 try:
@@ -50,13 +52,13 @@ PANEL_ALT = "#44403c"      # table header, selected row
 PANEL_HOVER = "#57534e"    # table header hover
 TEXT = "#f5f5f4"
 MUTED = "#a8a29e"
-GREEN = "#7fb069"          
+GREEN = "#7fb069"          # muted sage instead of neon green
 AMBER = "#e0a458"
 RED = "#d6604d"
 ABSENT_TEXT = "#e58a7b"
 
 # Font
-UI_FONT = "Open Sans"      # Choose the font you prefer
+UI_FONT = "Open Sans"
 
 # Box colors for OpenCV (BGR order, the same colors reversed)
 CV_GREEN = (105, 176, 127)
@@ -145,20 +147,47 @@ else:
 # ---------------------------------------------------------------------
 # 4. CAMERA
 # ---------------------------------------------------------------------
-video_capture = cv2.VideoCapture(CAMERA_INDEX)
-video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-if not video_capture.isOpened():
-    sys.exit("Could not open the camera. Check that it is connected and not used by another app.")
+adding a camera dropdown menu so that u can choose which camera runs
+
+CAM_BACKEND = cv2.CAP_DSHOW if sys.platform.startswith("win") else cv2.CAP_ANY
+
+
+def open_camera(index):
+    cap = cv2.VideoCapture(index, CAM_BACKEND)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    return cap
+
+
+def find_cameras(max_index=5):
+    """Return the indexes of cameras that open and give a picture."""
+    found = []
+    for i in range(max_index):
+        cap = cv2.VideoCapture(i, CAM_BACKEND)
+        if cap.isOpened() and cap.read()[0]:
+            found.append(i)
+        cap.release()
+    return found
+
+
+print("Looking for cameras...")
+available_cameras = find_cameras()
+print("Cameras found:", available_cameras)
+if not available_cameras:
+    sys.exit("No camera found. Check that it is connected and not used by another app.")
+
+
+current_camera_index = CAMERA_INDEX if CAMERA_INDEX in available_cameras else available_cameras[0]
+video_capture = open_camera(current_camera_index)
 
 # ---------------------------------------------------------------------
 # 5. USER INTERFACE
 # ---------------------------------------------------------------------
 root = tk.Tk()
 root.title("Smart Attendance Dashboard")
-
 from tkinter import font as tkfont
-def report_font():                                   # checking the font
+
+def report_font():
     families = tkfont.families(root)
     requested = UI_FONT
     actual = tkfont.Font(root=root, family=requested, size=12).actual()["family"]
@@ -175,7 +204,6 @@ def report_font():                                   # checking the font
             print(f"Installed fonts with a similar name: {similar}")
     print("----------------------")
 report_font()
-
 root.geometry("1280x740")
 root.minsize(1100, 660)
 root.configure(bg=BG)
@@ -209,6 +237,15 @@ left_panel = tk.Frame(body, bg=PANEL)
 left_panel.grid(row=0, column=0, sticky="n", padx=(0, 20))
 tk.Label(left_panel, text="Live Camera", font=(UI_FONT, 14, "bold"),
          bg=PANEL, fg=TEXT).pack(anchor="w", padx=16, pady=(14, 8))
+
+camera_row = tk.Frame(left_panel, bg=PANEL)
+camera_row.pack(anchor="w", padx=16, pady=(0, 8))
+tk.Label(camera_row, text="Camera:", font=(UI_FONT, 10),
+         bg=PANEL, fg=MUTED).pack(side=tk.LEFT, padx=(0, 8))
+camera_box = ttk.Combobox(camera_row, state="readonly", width=14, font=(UI_FONT, 10),
+                          values=[f"Camera {i}" for i in available_cameras])
+camera_box.set(f"Camera {current_camera_index}")
+camera_box.pack(side=tk.LEFT)
 
 placeholder = tk.PhotoImage(width=VIDEO_MAX_W, height=VIDEO_MAX_H)
 video_label = tk.Label(left_panel, image=placeholder, bg="#000000")
@@ -249,6 +286,16 @@ tk.Label(table_card, text="Live Class Roster", font=(UI_FONT, 14, "bold"),
 
 style = ttk.Style()
 style.theme_use("clam")
+
+style.configure("TCombobox", fieldbackground=PANEL_ALT, background=PANEL_ALT,
+                foreground=TEXT, arrowcolor=TEXT, bordercolor=PANEL_ALT)
+style.map("TCombobox", fieldbackground=[("readonly", PANEL_ALT)],
+          foreground=[("readonly", TEXT)])
+root.option_add("*TCombobox*Listbox.background", PANEL_ALT)
+root.option_add("*TCombobox*Listbox.foreground", TEXT)
+root.option_add("*TCombobox*Listbox.selectBackground", PANEL_HOVER)
+root.option_add("*TCombobox*Listbox.font", (UI_FONT, 10))
+
 style.configure("Treeview", background=PANEL, fieldbackground=PANEL, foreground=TEXT,
                 rowheight=36, font=(UI_FONT, 12), borderwidth=0)
 style.configure("Treeview.Heading", background=PANEL_ALT, foreground=TEXT,
@@ -397,6 +444,28 @@ def draw_results(frame, results):
         cv2.putText(frame, label, (left + 6, label_top + text_h + 5), FONT, 0.6,
                     (255, 255, 255), 1, cv2.LINE_AA)
 
+def switch_camera(event=None):
+    global video_capture, current_camera_index, last_results
+    index = available_cameras[camera_box.current()]
+    if index == current_camera_index:
+        return
+
+    new_capture = open_camera(index)
+    if not new_capture.isOpened() or not new_capture.read()[0]:
+        new_capture.release()
+        camera_box.set(f"Camera {current_camera_index}")
+        status_var.set(f"Could not open Camera {index}. Staying on Camera {current_camera_index}.")
+        return
+
+    video_capture.release()
+    video_capture = new_capture
+    current_camera_index = index
+    last_results = []        # clear old boxes
+    match_counts.clear()     # restart confirmation progress
+    status_var.set(f"Switched to Camera {index}")
+
+
+camera_box.bind("<<ComboboxSelected>>", switch_camera)
 
 def update_frame():
     global frame_count, last_results
