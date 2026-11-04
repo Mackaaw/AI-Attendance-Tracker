@@ -8,6 +8,7 @@ A visual-based attendance tracker that uses computer vision to recognize student
 - Automatic daily CSV attendance log
 - Requires several consecutive matching frames before marking someone present
 - Customizable font, user interface etc.
+- Camera selection and switch feature.
 
 ## Requirements
 - Python 3.8+
