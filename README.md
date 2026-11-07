@@ -1,6 +1,6 @@
 # AI-Attendance-Tracker
 
-A visual-based attendance tracker that uses computer vision to recognize students and mark them as present or absent.
+A visual-based attendance tracker that uses computer vision to recognize students and mark them as present or absent. The attendance log is marked as a CSV file in excel automatically.
 
 ## Features
 - Real-time face recognition through a webcam
