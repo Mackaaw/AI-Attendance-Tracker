@@ -36,7 +36,7 @@ CAMERA_INDEX = 0
 TOLERANCE = 0.48        # Max face distance to accept a match (lower = stricter)
 MARGIN = 0.06           # Best student must beat the runner-up by at least this much
 CONFIRM_FRAMES = 6      # Processed frames a face must match before marking present
-PROCESS_EVERY = 3       # Run recognition on every Nth camera frame (keeps UI smooth)
+PROCESS_EVERY = 3       # Run recognition on every nth camera frame (keeps UI smooth)
 DETECT_SCALE = 0.5      # Shrink factor for detection (0.5 is more accurate than 0.25)
 ENROLL_JITTERS = 10     # Extra samples per student photo (slower startup, better accuracy)
 SOUND_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'success.wav')
@@ -52,7 +52,7 @@ PANEL_ALT = "#44403c"      # table header, selected row
 PANEL_HOVER = "#57534e"    # table header hover
 TEXT = "#f5f5f4"
 MUTED = "#a8a29e"
-GREEN = "#7fb069"          # muted sage instead of neon green
+GREEN = "#7fb069"          #
 AMBER = "#e0a458"
 RED = "#d6604d"
 ABSENT_TEXT = "#e58a7b"
