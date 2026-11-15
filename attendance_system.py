@@ -52,7 +52,7 @@ PANEL_ALT = "#44403c"      # table header, selected row
 PANEL_HOVER = "#57534e"    # table header hover
 TEXT = "#f5f5f4"
 MUTED = "#a8a29e"
-GREEN = "#7fb069"          #
+GREEN = "#7fb069"          
 AMBER = "#e0a458"
 RED = "#d6604d"
 ABSENT_TEXT = "#e58a7b"
@@ -147,7 +147,6 @@ else:
 # ---------------------------------------------------------------------
 # 4. CAMERA
 # ---------------------------------------------------------------------
-adding a camera dropdown menu so that u can choose which camera runs
 
 CAM_BACKEND = cv2.CAP_DSHOW if sys.platform.startswith("win") else cv2.CAP_ANY
 
