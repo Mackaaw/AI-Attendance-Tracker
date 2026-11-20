@@ -32,13 +32,14 @@ The app plays `success.wav` (included in the repo) when a student is marked pres
 - To use your own sound, replace `success.wav` with another file of the same name.
 - It must be a real **WAV** file (16-bit PCM). Renaming an mp3 or mp4 to `.wav` will not work.
 - Sound playback uses `winsound`, so it works on **Windows**. On other systems the app falls back to a basic system beep.
+- **REMEMBER, 'WAV' FILE ONLY**
 
 ## Usage
 ```bash
 python attendance_system.py
 ```
 
-The attendance log is saved as an excel file `Attendance_YYYY-MM-DD.csv`.
+The attendance log is saved as an excel file `Attendance_YYYY-MM-DD.csv`. You can view all the details including the time in there.
 
 ## Limitations
 Face recognition accuracy depends on lighting, camera quality, and the photos provided. Thresholds can be tuned in the script (`TOLERANCE`, `MARGIN`, `CONFIRM_FRAMES`).
